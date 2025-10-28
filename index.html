@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TCP Photos</title>
 
-  <!-- === CONFIGURATION: EDIT THESE 4 LINES === -->
+  <!-- === CONFIGURATION (pre-filled for you) === -->
   <script>
     const GH_USER = '1oby';   // your GitHub username
-    const GH_REPO = 'site';         // your repository name
+    const GH_REPO = 'site';   // your repository name
     const PHOTOS_DIR = 'photos';              // folder containing images
     const CONTACT_EMAIL = 'you@example.com';  // your contact email
   </script>
@@ -18,26 +18,30 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
-    :root{--bg:#212121;--text:#e5e5e5;--muted:#a3a3a3;--line:#333;--card:#2a2a2a}
+    :root{--bg:#212121;--text:#e5e5e5;--muted:#a3a3a3;--line:#3a3a3a;--card:#262626}
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Arial,Helvetica,sans-serif}
     a{color:inherit;text-decoration:none}
     .container{max-width:1120px;margin:0 auto;padding:0 16px}
-    header{position:fixed;inset:0 0 auto 0;height:64px;z-index:50;background:#1f1f1fe6;border-bottom:1px solid var(--line)}
+    header{position:fixed;inset:0 0 auto 0;height:64px;z-index:50;background:#1f1f1ff2;border-bottom:1px solid var(--line);backdrop-filter:saturate(120%) blur(6px)}
     nav a{margin-right:24px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
     nav a:hover{opacity:1}
     .brand{position:absolute;left:50%;transform:translateX(-50%);font-family:Oswald,Impact,system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
     .brand a{font-size:24px}
     .right{margin-left:auto;display:flex;gap:12px}
-    main{padding-top:88px;padding-bottom:56px}
+    main{padding-top:120px; /* push content below fixed header */ padding-bottom:56px}
     footer{border-top:1px solid var(--line);color:var(--muted);padding:32px 0;text-align:center}
-    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-    @media(min-width:640px){.grid{grid-template-columns:repeat(3,1fr);gap:14px}}
-    @media(min-width:900px){.grid{grid-template-columns:repeat(4,1fr);gap:18px}}
-    .tile{border-radius:16px;overflow:hidden;background:var(--card)}
-    .tile img{width:100%;height:100%;aspect-ratio:1/1;object-fit:cover;transition:transform .25s ease}
-    .tile:hover img{transform:scale(1.04)}
-    .btn{display:inline-flex;align-items:center;gap:.5rem;border:1px solid #3a3a3a;background:#ffffff12;padding:.75rem 1.25rem;border-radius:14px;font-weight:600}
+
+    /* Masonry layout using CSS columns (no JS) */
+    .masonry{column-width: 320px; column-gap: 16px}
+    @media(min-width:640px){.masonry{column-width: 360px; column-gap: 18px}}
+    @media(min-width:900px){.masonry{column-width: 380px; column-gap: 20px}}
+    .masonry-item{break-inside: avoid; display:inline-block; width:100%; margin:0 0 16px}
+
+    /* Image styling: keep full image visible (no cropping) */
+    .photo{width:100%; height:auto; display:block; border:1px solid var(--line); border-radius:16px; background:#111}
+
+    .btn{display:inline-flex;align-items:center;gap:.5rem;border:1px solid var(--line);background:#ffffff12;padding:.75rem 1.25rem;border-radius:14px;font-weight:600}
     .btn:hover{background:#ffffff22}
     .muted{color:var(--muted)}
     .hidden{display:none}
@@ -62,12 +66,14 @@
   </header>
 
   <main class="container">
+    <!-- Portfolio -->
     <section id="page-portfolio">
       <h1 class="sr-only">Portfolio</h1>
       <p id="status" class="muted">Loading your gallery…</p>
-      <ul id="grid" class="grid hidden"></ul>
+      <ul id="grid" class="masonry hidden"></ul>
     </section>
 
+    <!-- About -->
     <section id="page-about" class="hidden">
       <h1 style="font-size:32px;margin:0 0 12px">About TCP Photos</h1>
       <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start">
@@ -81,20 +87,21 @@
       </div>
     </section>
 
+    <!-- Contact -->
     <section id="page-contact" class="hidden" style="max-width:640px">
       <h1 style="font-size:32px;margin-bottom:12px">Contact</h1>
       <form onsubmit="sendMail(event)">
         <div style="margin-bottom:12px">
           <label>Name</label><br />
-          <input id="name" style="width:100%;padding:12px;border-radius:10px;border:1px solid #3a3a3a;background:#262626;color:#fff" />
+          <input id="name" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#262626;color:#fff" />
         </div>
         <div style="margin-bottom:12px">
           <label>Email</label><br />
-          <input id="email" type="email" style="width:100%;padding:12px;border-radius:10px;border:1px solid #3a3a3a;background:#262626;color:#fff" />
+          <input id="email" type="email" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#262626;color:#fff" />
         </div>
         <div style="margin-bottom:16px">
           <label>Message</label><br />
-          <textarea id="message" rows="6" style="width:100%;padding:12px;border-radius:10px;border:1px solid #3a3a3a;background:#262626;color:#fff"></textarea>
+          <textarea id="message" rows="6" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#262626;color:#fff"></textarea>
         </div>
         <button class="btn" type="submit">Send email</button>
       </form>
@@ -106,6 +113,7 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
+    // SPA routing (hash-based)
     function renderRoute(){
       const hash = window.location.hash || '#/';
       document.getElementById('page-portfolio').classList.toggle('hidden', hash !== '#/');
@@ -127,15 +135,11 @@
 
     let loaded = false;
     async function loadGallery(){
-      if(loaded) return;
+      if(loaded) return; // only once per load
       loaded = true;
       const status = document.getElementById('status');
       const grid = document.getElementById('grid');
       try{
-        if(GH_USER.includes('YOUR_') || GH_REPO.includes('YOUR_')){
-          status.textContent = 'Set your GitHub username and repo at the top of index.html to see photos.';
-          return;
-        }
         status.textContent = 'Loading your gallery…';
         const api = `https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${PHOTOS_DIR}`;
         const res = await fetch(api, { headers: { 'Accept': 'application/vnd.github+json' }});
@@ -143,24 +147,27 @@
         const files = (await res.json()).filter(f => /\.(jpe?g|png|webp|gif)$/i.test(f.name));
         files.sort((a,b)=> a.name < b.name ? 1 : -1);
         if(files.length === 0){ status.textContent = 'No images found in /' + PHOTOS_DIR + ' yet.'; return; }
-        const frags = document.createDocumentFragment();
+
+        const frag = document.createDocumentFragment();
         for(const f of files){
           const li = document.createElement('li');
-          li.className = 'tile';
+          li.className = 'masonry-item';
+
           const a = document.createElement('a');
-          a.href = f.download_url;
-          a.target = '_blank';
-          a.rel = 'noreferrer';
+          a.href = f.download_url; a.target = '_blank'; a.rel = 'noreferrer';
+
           const img = document.createElement('img');
+          img.className = 'photo';
           img.loading = 'lazy';
           img.alt = f.name.replace(/[_-]/g,' ').replace(/\.[^.]+$/,'');
           const cdn = `https://cdn.jsdelivr.net/gh/${GH_USER}/${GH_REPO}/${PHOTOS_DIR}/${encodeURIComponent(f.name)}`;
           img.src = cdn;
+
           a.appendChild(img);
           li.appendChild(a);
-          frags.appendChild(li);
+          frag.appendChild(li);
         }
-        grid.appendChild(frags);
+        grid.appendChild(frag);
         status.classList.add('hidden');
         grid.classList.remove('hidden');
       }catch(err){
