@@ -23,22 +23,44 @@
     body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Arial,Helvetica,sans-serif}
     a{color:inherit;text-decoration:none}
     .container{max-width:1300px;margin:0 auto;padding:0 20px}
-    header{position:fixed;inset:0 0 auto 0;height:64px;z-index:50;background:#1f1f1ff2;border-bottom:1px solid var(--line);backdrop-filter:saturate(120%) blur(6px)}
-    nav a{margin-right:24px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+
+    /* Header now STICKY (no overlap) */
+    header{position:fixed; inset:0 0 auto 0; z-index:60; background:#1f1f1ff2; border-bottom:1px solid var(--line); backdrop-filter:saturate(120%) blur(6px)}
+    .bar{height:64px;display:flex;align-items:center}
+    nav a{margin-right:24px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.9}
     nav a:hover{opacity:1}
     .brand{position:absolute;left:50%;transform:translateX(-50%);font-family:Oswald,Impact,system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
     .brand a{font-size:24px}
     .right{margin-left:auto;display:flex;gap:12px}
-    main{padding-top:140px; /* more separation below header */ padding-bottom:56px}
+
+    /* Mobile header */
+    .hamburger{display:none;appearance:none;background:none;border:0;padding:8px;margin-right:8px}
+    .hamburger span{display:block;width:24px;height:2px;background:#fff;margin:5px 0}
+    @media(max-width:780px){
+      nav.desktop{display:none}
+      .brand a{font-size:20px}
+      .hamburger{display:block}
+      .bar{height:auto;padding:10px 0}
+    }
+
+    /* Off-canvas menu */
+    .drawer{position:fixed;inset:0 auto 0 0;width:260px;background:#1c1c1c;transform:translateX(-100%);transition:transform .25s ease;z-index:70;border-right:1px solid var(--line);padding:20px}
+    .drawer a{display:block;padding:12px 4px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.95}
+    .drawer.open{transform:none}
+    .overlay{position:fixed;inset:0;background:#0008;opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:65}
+    .overlay.show{opacity:1;pointer-events:auto}
+
+    /* Main spacing: small gap below header */
+    main{padding-bottom:56px}
     footer{border-top:1px solid var(--line);color:var(--muted);padding:32px 0;text-align:center}
 
-    /* Masonry layout using CSS columns for 3 across */
+    /* Masonry: 3 across on desktop */
     .masonry{column-count:3; column-gap:20px}
     @media(max-width:1000px){.masonry{column-count:2; column-gap:18px}}
     @media(max-width:640px){.masonry{column-count:1; column-gap:16px}}
     .masonry-item{break-inside: avoid; display:inline-block; width:100%; margin:0 0 20px}
 
-    /* Image styling: full image visible, light separation */
+    /* Images: full image visible, with border */
     .photo{width:100%; height:auto; display:block; border:1px solid var(--line); border-radius:16px; background:#111}
 
     .btn{display:inline-flex;align-items:center;gap:.5rem;border:1px solid var(--line);background:#ffffff12;padding:.75rem 1.25rem;border-radius:14px;font-weight:600}
@@ -49,12 +71,25 @@
   </style>
 </head>
 <body>
+  <!-- Drawer for mobile -->
+  <div id="overlay" class="overlay"></div>
+  <aside id="drawer" class="drawer">
+    <a href="#/" onclick="closeDrawer()">Portfolio</a>
+    <a href="#/about" onclick="closeDrawer()">About</a>
+    <a href="#/contact" onclick="closeDrawer()">Contact</a>
+    <hr style="border-color:var(--line);opacity:.4"/>
+    <a href="https://www.instagram.com/tcp.photos/" target="_blank" rel="noreferrer">Instagram ↗</a>
+  </aside>
+
   <header>
-    <div class="container" style="display:flex;align-items:center;height:64px">
-      <nav>
-        <a href="#/" id="nav-portfolio">Portfolio</a>
-        <a href="#/about" id="nav-about">About</a>
-        <a href="#/contact" id="nav-contact">Contact</a>
+    <div class="container bar">
+      <button class="hamburger" aria-label="Open menu" onclick="openDrawer()">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="desktop">
+        <a href="#/">Portfolio</a>
+        <a href="#/about">About</a>
+        <a href="#/contact">Contact</a>
       </nav>
       <div class="brand"><a href="#/">TCP Photos</a></div>
       <div class="right">
@@ -113,13 +148,39 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
+    // Ensure content never hides under the fixed header
+    function setBodyOffset(){
+      const h = document.querySelector('header').offsetHeight || 64;
+      document.body.style.paddingTop = (h + 16) + 'px'; // 16px breathing room
+    }
+    window.addEventListener('load', setBodyOffset);
+    window.addEventListener('resize', setBodyOffset);
+
+    // Drawer controls (mobile)
+    function openDrawer(){
+      document.getElementById('drawer').classList.add('open');
+      document.getElementById('overlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
+      setBodyOffset();
+    }
+    function closeDrawer(){
+      document.getElementById('drawer').classList.remove('open');
+      document.getElementById('overlay').classList.remove('show');
+      document.body.style.overflow = '';
+      setBodyOffset();
+    }
+    window.openDrawer = openDrawer; window.closeDrawer = closeDrawer;
+    document.getElementById('overlay').addEventListener('click', closeDrawer);
+
     // SPA routing (hash-based)
     function renderRoute(){
-      const hash = window.location.hash || '#/';
-      document.getElementById('page-portfolio').classList.toggle('hidden', hash !== '#/');
-      document.getElementById('page-about').classList.toggle('hidden', hash !== '#/about');
-      document.getElementById('page-contact').classList.toggle('hidden', hash !== '#/contact');
-      if(hash === '#/') loadGallery();
+      const hash = window.location.hash || '#/'
+      document.getElementById('page-portfolio').classList.toggle('hidden', hash !== '#/')
+      document.getElementById('page-about').classList.toggle('hidden', hash !== '#/about')
+      document.getElementById('page-contact').classList.toggle('hidden', hash !== '#/contact')
+      if(hash === '#/') loadGallery()
+      closeDrawer()
+      setBodyOffset()
     }
     window.addEventListener('hashchange', renderRoute);
 
