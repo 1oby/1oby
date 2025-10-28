@@ -22,23 +22,23 @@
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Arial,Helvetica,sans-serif}
     a{color:inherit;text-decoration:none}
-    .container{max-width:1120px;margin:0 auto;padding:0 16px}
+    .container{max-width:1300px;margin:0 auto;padding:0 20px}
     header{position:fixed;inset:0 0 auto 0;height:64px;z-index:50;background:#1f1f1ff2;border-bottom:1px solid var(--line);backdrop-filter:saturate(120%) blur(6px)}
     nav a{margin-right:24px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
     nav a:hover{opacity:1}
     .brand{position:absolute;left:50%;transform:translateX(-50%);font-family:Oswald,Impact,system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
     .brand a{font-size:24px}
     .right{margin-left:auto;display:flex;gap:12px}
-    main{padding-top:120px; /* push content below fixed header */ padding-bottom:56px}
+    main{padding-top:140px; /* more separation below header */ padding-bottom:56px}
     footer{border-top:1px solid var(--line);color:var(--muted);padding:32px 0;text-align:center}
 
-    /* Masonry layout using CSS columns (no JS) */
-    .masonry{column-width: 320px; column-gap: 16px}
-    @media(min-width:640px){.masonry{column-width: 360px; column-gap: 18px}}
-    @media(min-width:900px){.masonry{column-width: 380px; column-gap: 20px}}
-    .masonry-item{break-inside: avoid; display:inline-block; width:100%; margin:0 0 16px}
+    /* Masonry layout using CSS columns for 3 across */
+    .masonry{column-count:3; column-gap:20px}
+    @media(max-width:1000px){.masonry{column-count:2; column-gap:18px}}
+    @media(max-width:640px){.masonry{column-count:1; column-gap:16px}}
+    .masonry-item{break-inside: avoid; display:inline-block; width:100%; margin:0 0 20px}
 
-    /* Image styling: keep full image visible (no cropping) */
+    /* Image styling: full image visible, light separation */
     .photo{width:100%; height:auto; display:block; border:1px solid var(--line); border-radius:16px; background:#111}
 
     .btn{display:inline-flex;align-items:center;gap:.5rem;border:1px solid var(--line);background:#ffffff12;padding:.75rem 1.25rem;border-radius:14px;font-weight:600}
